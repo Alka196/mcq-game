@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Question from './components/Question';
+import Result from './components/Result';
+import questions from './data/questions';
 
-function App() {
+const App = () => {
+  const [score, setScore] = useState(0);
+
+  const updateScore = () => {
+    setScore(score + 1);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<Navigate to="/question/0" />} />
+          {questions.map((q, index) => (
+            <Route
+              key={index}
+              path={`/question/${index}`}
+              element={
+                <Question
+                  question={q.question}
+                  options={q.options}
+                  correctAnswer={q.correctAnswer}
+                  questionIndex={index}
+                  totalQuestions={questions.length}
+                  updateScore={updateScore}
+                />
+              }
+            />
+          ))}
+          <Route path="/result" element={<Result score={score} totalQuestions={questions.length} />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
